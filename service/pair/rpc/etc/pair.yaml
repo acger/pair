@@ -1,0 +1,42 @@
+Name: pair.rpc
+ListenOn: 0.0.0.0:60002
+
+Etcd:
+  Hosts:
+    - dev.lo:2379
+  Key: pair.rpc
+
+DB:
+  DataSource: root:123456@tcp(dev.ll:4000)/fireflyPair?charset=utf8mb4&parseTime=True&loc=Local
+
+Cache:
+  - Host: dev.lo:6379
+
+UserRPC:
+  Etcd:
+    Hosts:
+      - dev.lo:2379
+    Key: user.rpc
+
+Log:
+  ServiceName: "pair-rpc"
+  Mode: "file"
+  Path: "/var/log/acger-pair/pair-rpc"
+  Level: "error"
+
+Elasticsearch:
+  Addresses:
+    - "http://dev.lo:9200"
+  Username: "elastic"
+  Password: "N+Hk0W*hHKpCBx2t6Fx0"
+
+Telemetry:
+  Name: pair-rpc
+  Endpoint: http://dev.ll:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9062
+  Path: /metrics

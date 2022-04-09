@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "./chat/pb";
+
+message MsgSaveReq{
+  int64 Uid = 1;
+  int64 ToUid = 2;
+  string Message = 3;
+  bool Status = 4;
+}
+
+message Rsp{
+  int64 Code = 1;
+  string Message = 2;
+}
+
+message MsgListReq{
+  int64 Uid = 1;
+  int64 ToUid = 2;
+  int64 Page = 3;
+  int64 PageSize = 4;
+}
+
+message ChatMessage  {
+  int64 Id = 1;
+  int64 Uid = 2;
+  int64 ToUid = 3;
+  string Message = 4;
+  bool Status = 5;
+}
+
+message MsgListRsp{
+  repeated ChatMessage Msg = 1;
+  int64 Total = 2;
+  int64 Page = 3;
+  int64 PageSize = 4;
+  int64 Code = 5;
+  string Message = 6;
+}
+
+message ChatHistoryReq{
+  int64 Id = 1;
+}
+
+message ChatUser{
+  int64 Id = 1;
+  string Name = 2;
+  string Account = 3;
+  string Avatar = 4;
+  bool Status = 5;
+}
+
+message ChatHistoryRsp{
+  int64 Code = 1;
+  string Message = 2;
+  repeated ChatUser User = 3;
+}
+
+message ChatNumberReq{
+  int64 Id = 1;
+}
+
+message ChatNumberRsp{
+  int64 Code = 1;
+  string Message = 2;
+  int64 Number = 3;
+}
+
+message CHSaveReq{
+  int64 Uid = 1;
+  int64 ToUid = 2;
+}
+
+service Chat{
+  rpc MessageSave(MsgSaveReq) returns(Rsp);
+  rpc MessageList(MsgListReq) returns(MsgListRsp);
+  rpc ChatHistoryList(ChatHistoryReq) returns(ChatHistoryRsp);
+  rpc ChatNumber(ChatNumberReq) returns(ChatNumberRsp);
+  rpc ChatHistorySave(CHSaveReq) returns (Rsp);
+}

@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "./user/pb";
+
+message UserAddReq {
+    string account = 1;
+    string password = 2;
+    string name = 3;
+    string avatar = 4;
+}
+
+message UserAddRsp{
+    int64 code = 1;
+    string message = 2;
+    int64 uid = 3;
+}
+
+message UserUpdateReq {
+    int64 id = 1;
+    string password = 2;
+    string name = 3;
+    string avatar = 4;
+    string status = 5;
+}
+
+message UserInfo{
+    int64 id = 1;
+    string account = 2;
+    string name = 3;
+    string avatar = 4;
+    string status = 5;
+}
+
+message UserDetail{
+    int64 id = 1;
+    string account = 2;
+    string name = 3;
+    string avatar = 4;
+    string status = 5;
+    string password = 6;
+}
+
+message UserInfoReq{
+    int64 id = 1;
+    string account = 2;
+}
+
+message UserInfoRsp{
+    int64 code = 1;
+    string message = 2;
+    UserDetail user = 3;
+}
+
+message UserListReq{
+    repeated int64 id = 1;
+}
+
+message UserListRsp{
+    int64 code = 1;
+    string message = 2;
+    repeated UserInfo user = 3;
+}
+
+message Response{
+    int64 code = 1;
+    string message = 2;
+}
+
+service User {
+    rpc UserAdd(UserAddReq) returns(UserAddRsp);
+    rpc UserUpdate(UserUpdateReq) returns(Response);
+    rpc UserInfo(UserInfoReq) returns (UserInfoRsp);
+    rpc UserList(UserListReq) returns(UserListRsp);
+}

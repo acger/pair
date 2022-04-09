@@ -1,0 +1,274 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: acger-config
+  namespace: acger
+data:
+  chat-api.yaml: |
+    Name: chat-api
+    Host: 0.0.0.0
+    Port: 50003
+    Timeout: 0
+
+    Log:
+      ServiceName: "chat-api"
+      Mode: "file"
+      Path: "/var/log/acger-pair/chat-api"
+      Level: "error"
+
+    Auth:
+      AccessSecret: "xxx@xxx"
+      AccessExpire: 7776000
+
+    ChatRPC:
+      Etcd:
+        Hosts:
+          - etcd.acger:2379
+        Key: chat.rpc
+
+    ChatKq:
+      Name: chat.kq
+      Brokers:
+        - kafka.acger:9092
+      Group: chat
+      Topic: user-chat
+      Offset: first
+      Consumers: 2
+
+    Telemetry:
+      Name: chat-api
+      Endpoint: http://jaeger.acger:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+
+    Prometheus:
+      Host: 0.0.0.0
+      Port: 9053
+      Path: /metrics
+  chat-rpc.yaml: |
+    Name: chat.rpc
+    ListenOn: 0.0.0.0:60003
+
+    Etcd:
+      Hosts:
+        - etcd.acger:2379
+      Key: chat.rpc
+
+    DB:
+      DataSource: root:123456@tcp(tidb.acger:4000)/fireflyChat?charset=utf8mb4&parseTime=True&loc=Local
+
+    Cache:
+      - Host: redis.acger:6379
+
+    UserRPC:
+      Etcd:
+        Hosts:
+          - etcd.acger:2379
+        Key: user.rpc
+
+    Log:
+      ServiceName: "chat-rpc"
+      Mode: "file"
+      Path: "/var/log/acger-pair/chat-rpc"
+      Level: "error"
+
+    Telemetry:
+      Name: chat-rpc
+      Endpoint: http://jaeger.acger:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+
+    Prometheus:
+      Host: 0.0.0.0
+      Port: 9063
+      Path: /metrics
+
+    ChatKq:
+      Name: chat.kq
+      Brokers:
+        - kafka.acger:9092
+      Group: chat
+      Topic: user-chat
+      Offset: first
+      Consumers: 2
+  pair-api.yaml: |
+    Name: pair-api
+    Host: 0.0.0.0
+    Port: 50002
+
+    Auth:
+      AccessSecret: "xxx@xxx"
+      AccessExpire: 7776000
+
+    UserSvc:
+      Etcd:
+        Hosts:
+          - etcd.acger:2379
+        Key: user.rpc
+
+    PairRPC:
+      Etcd:
+        Hosts:
+          - etcd.acger:2379
+        Key: pair.rpc
+
+    Log:
+      ServiceName: "pair-api"
+      Mode: "file"
+      Path: "/var/log/acger-pair/pair-api"
+      Level: "error"
+
+    Telemetry:
+      Name: pair-api
+      Endpoint: http://jaeger.acger:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+
+    Prometheus:
+      Host: 0.0.0.0
+      Port: 9052
+      Path: /metrics
+  pair-rpc.yaml: |
+    Name: pair.rpc
+    ListenOn: 0.0.0.0:60002
+
+    Etcd:
+      Hosts:
+        - etcd.acger:2379
+      Key: pair.rpc
+
+    DB:
+      DataSource: root:123456@tcp(tidb.acger:4000)/fireflyPair?charset=utf8mb4&parseTime=True&loc=Local
+
+    Cache:
+      - Host: redis.acger:6379
+
+    UserRPC:
+      Etcd:
+        Hosts:
+          - etcd.acger:2379
+        Key: user.rpc
+
+    Log:
+      ServiceName: "pair-rpc"
+      Mode: "file"
+      Path: "/var/log/acger-pair/pair-rpc"
+      Level: "error"
+
+    Elasticsearch:
+      Addresses:
+        - "http://elasticsearch.acger:9200"
+      Username: "elastic"
+      Password: "N+Hk0W*hHKpCBx2t6Fx0"
+
+    Telemetry:
+      Name: pair-rpc
+      Endpoint: http://jaeger.acger:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+
+    Prometheus:
+      Host: 0.0.0.0
+      Port: 9062
+      Path: /metrics
+  user-api.yaml: |
+    Name: user-api
+    Host: 0.0.0.0
+    Port: 50001
+
+    Auth:
+      AccessSecret: "xxx@xxx"
+      AccessExpire: 7776000
+
+    Log:
+      ServiceName: "user-api"
+      Mode: "file"
+      Path: "/var/log/acger-pair/user-api"
+      Level: "error"
+
+    UserRPC:
+      Etcd:
+        Hosts:
+          - etcd.acger:2379
+        Key: user.rpc
+
+    Qiniu:
+      Bucket: xxx
+      AK: xxx
+      SK: xxx
+
+    Telemetry:
+      Name: user-api
+      Endpoint: http://jaeger.acger:14268/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+
+    Prometheus:
+      Host: 0.0.0.0
+      Port: 9051
+      Path: /metrics
+  user-rpc.yaml: |
+    Name: user.rpc
+    ListenOn: 0.0.0.0:60001
+
+    Etcd:
+      Hosts:
+        - etcd.acger:2379
+      Key: user.rpc
+
+    DB:
+      DataSource: root:123456@tcp(tidb.acger:4000)/fireflyUser?charset=utf8mb4&parseTime=True&loc=Local
+
+    Cache:
+      - Host: redis.acger:6379
+
+    Log:
+      ServiceName: "user-rpc"
+      Mode: "file"
+      Path: "/var/log/acger-pair/user-rpc"
+      Level: "error"
+
+    Telemetry:
+      Name: user-rpc
+      Endpoint: http://jaeger.acger/api/traces
+      Sampler: 1.0
+      Batcher: jaeger
+
+    Prometheus:
+      Host: 0.0.0.0
+      Port: 9061
+      Path: /metrics
+  prometheus.yml: |
+    global:
+      scrape_interval: 1m
+      external_labels:
+        monitor: "codelab-monitor"
+
+    scrape_configs:
+      - job_name: "prometheus"
+        static_configs:
+          - targets: [ "127.0.0.1:9090" ]
+
+      - job_name: "user-rpc"
+        static_configs:
+          - targets: [ "user-rpc-svc.acger:9061" ]
+
+      - job_name: "pair-rpc"
+        static_configs:
+          - targets: [ "pair-rpc-svc.acger:9062" ]
+
+      - job_name: "chat-rpc"
+        static_configs:
+          - targets: [ "chat-rpc-svc.acger:9063" ]
+
+      - job_name: "user-api"
+        static_configs:
+          - targets: [ "user-api-svc.acger:9051" ]
+
+      - job_name: "pair-api"
+        static_configs:
+          - targets: [ "pair-api-svc.acger:9052" ]
+
+      - job_name: "chat-api"
+        static_configs:
+          - targets: [ "chat-api-svc.acger:9053" ]

@@ -1,0 +1,35 @@
+Name: user-api
+Host: 0.0.0.0
+Port: 50001
+
+Auth:
+  AccessSecret: "xxx@xxx"
+  AccessExpire: 7776000
+
+Log:
+  ServiceName: "user-api"
+  Mode: "file"
+  Path: "/var/log/acger-pair/user-api"
+  Level: "error"
+
+UserRPC:
+  Etcd:
+    Hosts:
+      - dev.lo:2379
+    Key: user.rpc
+
+Qiniu:
+  Bucket: test
+  AK: xxx
+  SK: xxx
+
+Telemetry:
+  Name: user-api
+  Endpoint: http://dev.ll:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9051
+  Path: /metrics

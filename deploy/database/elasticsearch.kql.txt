@@ -1,0 +1,36 @@
+PUT acger_pair
+{
+  "settings": {
+    "number_of_replicas": 0,
+    "number_of_shards": 5
+  },
+  "mappings": {
+    "properties": {
+      "uid": {
+        "type": "keyword"
+      },
+      "boost": {
+        "type": "integer"
+      },
+      "start": {
+        "type": "boolean"
+      },
+      "skill": {
+        "type": "text",
+        "analyzer": "smartcn"
+      },
+      "skill_need": {
+        "type": "text",
+        "analyzer": "smartcn"
+      },
+      "create_time": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis||yyyy-MM-dd HH:mm:ss"
+      },
+      "update_time": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis||yyyy-MM-dd HH:mm:ss"
+      }
+    }
+  }
+}

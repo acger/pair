@@ -1,0 +1,107 @@
+syntax = "v1"
+
+@server(
+    group: home
+)
+service user-api {
+    @doc "Home"
+    @handler homeHandler
+    get /user/home returns (Rsp)
+
+    @doc "注册"
+    @handler registerHandler
+    post /user/register (registerReq) returns (registerRsp)
+
+    @doc "登录"
+    @handler loginHandler
+    post /user/login (loginReq) returns (loginRsp)
+}
+
+@server(
+    jwt: Auth
+    group: profile
+)
+
+service user-api {
+    @doc "个人资料"
+    @handler profileHandler
+    get /user/profile returns (profileRsp)
+
+    @doc "修改个人资料"
+    @handler editProfileHandler
+    post /user/profile/edit (editReq) returns (editRsp)
+
+    @doc "获取七牛CDN上传token"
+    @handler qiniuUpTokenHandler
+    post /user/qiniu/up/token (qiniuUpReq) returns (qiniuUpRsp)
+}
+
+type (
+    User {
+        Id string `json:"id"`
+        Account string `json:"account"`
+        Name string `json:"name,optional"`
+        Avatar string `json:"avatar,optional"`
+    }
+)
+
+type (
+    registerReq {
+        Account string `json:"account" validate:"required,alphanum,min=6,max=30"`
+        Password string `json:"password" validate:"required,min=6,max=30"`
+        Name string `json:"name,optional" validate:"max=30"`
+        Avatar string `json:"avatar,optional"`
+    }
+
+    registerRsp {
+        Code int64 `json:"code"`
+        Message string `json:"message"`
+        User User `json:"user"`
+        Token string `json:"token"`
+    }
+
+    loginReq {
+        Account string `json:"account"`
+        Password string `json:"password"`
+    }
+
+    loginRsp {
+        Code int64 `json:"code"`
+        Message string `json:"message"`
+        User User `json:"user"`
+        Token string `json:"token"`
+    }
+
+    profileRsp {
+        Code int64 `json:"code"`
+        Message string `json:"message"`
+        User User `json:"user"`
+    }
+
+    editReq {
+        Name string `json:"name,optional" validate:"max=30"`
+        Avatar string `json:"avatar,optional"`
+        Password string `json:"password,optional" validate:"required,min=6,max=30"`
+    }
+
+    editRsp {
+        Code int64 `json:"code"`
+        Message string `json:"message"`
+    }
+
+
+    qiniuUpReq {
+        Name string `json:"name"`
+    }
+
+    qiniuUpRsp {
+        Code int64 `json:"code"`
+        Message string `json:"message"`
+        Token string `json:"token"`
+    }
+
+    Rsp {
+        Code int64 `json:"code"`
+        Message string `json:"message"`
+    }
+)

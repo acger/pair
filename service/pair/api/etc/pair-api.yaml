@@ -1,0 +1,36 @@
+Name: pair-api
+Host: 0.0.0.0
+Port: 50002
+
+Auth:
+  AccessSecret: "xxx@xxx"
+  AccessExpire: 7776000
+
+UserSvc:
+  Etcd:
+    Hosts:
+      - dev.lo:2379
+    Key: user.rpc
+
+PairRPC:
+  Etcd:
+    Hosts:
+      - dev.lo:2379
+    Key: pair.rpc
+
+Log:
+  ServiceName: "pair-api"
+  Mode: "file"
+  Path: "/var/log/acger-pair/pair-api"
+  Level: "error"
+
+Telemetry:
+  Name: pair-api
+  Endpoint: http://dev.ll:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9052
+  Path: /metrics

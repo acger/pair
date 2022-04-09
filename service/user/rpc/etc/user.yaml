@@ -1,0 +1,30 @@
+Name: user.rpc
+ListenOn: 0.0.0.0:60001
+
+Etcd:
+  Hosts:
+    - dev.lo:2379
+  Key: user.rpc
+
+DB:
+  DataSource: root:123456@tcp(dev.ll:4000)/fireflyUser?charset=utf8mb4&parseTime=True&loc=Local
+
+Cache:
+  - Host: dev.lo:6379
+
+Log:
+  ServiceName: "user-rpc"
+  Mode: "file"
+  Path: "/var/log/acger-pair/user-rpc"
+  Level: "error"
+
+Telemetry:
+  Name: user-rpc
+  Endpoint: http://dev.ll:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9061
+  Path: /metrics

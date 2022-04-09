@@ -1,0 +1,40 @@
+Name: chat-api
+Host: 0.0.0.0
+Port: 50003
+Timeout: 0
+
+Log:
+  ServiceName: "chat-api"
+  Mode: "file"
+  Path: "/var/log/acger-pair/chat-api"
+  Level: "error"
+
+Auth:
+  AccessSecret: "xxx@xxx"
+  AccessExpire: 7776000
+
+ChatRPC:
+  Etcd:
+    Hosts:
+      - dev.lo:2379
+    Key: chat.rpc
+
+ChatKq:
+  Name: chat.kq
+  Brokers:
+    - dev.lo:9092
+  Group: chat
+  Topic: user-chat
+  Offset: first
+  Consumers: 2
+
+Telemetry:
+  Name: chat-api
+  Endpoint: http://dev.ll:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9053
+  Path: /metrics

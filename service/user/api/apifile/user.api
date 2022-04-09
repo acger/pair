@@ -1,0 +1,11 @@
+syntax = "v1"
+
+info(
+	title: "user-api"
+	desc: "user api"
+	author: "grail"
+	email: "nocilol@163.com"
+	version: "v1"
+)
+
+import "base.api"

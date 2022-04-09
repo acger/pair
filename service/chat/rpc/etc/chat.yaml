@@ -1,0 +1,45 @@
+Name: chat.rpc
+ListenOn: 0.0.0.0:60003
+
+Etcd:
+  Hosts:
+    - dev.lo:2379
+  Key: chat.rpc
+
+UserRPC:
+  Etcd:
+    Hosts:
+      - dev.lo:2379
+    Key: user.rpc
+
+DB:
+  DataSource: root:123456@tcp(dev.ll:4000)/fireflyChat?charset=utf8mb4&parseTime=True&loc=Local
+
+Cache:
+  - Host: dev.lo:6379
+
+Log:
+  ServiceName: "chat-rpc"
+  Mode: "file"
+  Path: "/var/log/acger-pair/chat-rpc"
+  Level: "error"
+
+Telemetry:
+  Name: chat-rpc
+  Endpoint: http://dev.ll:14268/api/traces
+  Sampler: 1.0
+  Batcher: jaeger
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 9063
+  Path: /metrics
+
+ChatKq:
+  Name: chat.kq
+  Brokers:
+    - dev.lo:9092
+  Group: chat
+  Topic: user-chat
+  Offset: first
+  Consumers: 2

@@ -1,0 +1,112 @@
+syntax = "v1"
+
+@server(
+    jwt: Auth
+    group: chatGroup
+)
+
+service chat-api {
+    @doc "聊天记录"
+    @handler ChatMessage
+    post /chat/message (ChatMessageReq) returns (ChatMessageRsp)
+
+    @doc "保存聊天记录"
+    @handler ChatMessageSave
+    post /chat/message/save (ChatMessageSaveReq) returns (Rsp)
+
+    @doc "聊天会话列表"
+    @handler ChatHistory
+    get /chat/history returns (ChatHistoryRsp)
+
+    @doc "保存历史聊天会话"
+    @handler ChatHistorySave
+    post /chat/history/save (ChatHistorySaveReq) returns (Rsp)
+
+    @doc "未读聊天会话数"
+    @handler ChatHistoryNumber
+    get /chat/history/number returns (ChatNumberRsp)
+}
+
+type (
+    ChatMessage {
+        Id string `json:"id"`
+        Uid string `json:"uid"`
+        ToUid string `json:"to_uid"`
+        Message string `json:"message"`
+    }
+
+    ChatMessageSaveReq {
+        Uid string `json:"uid"`
+        ToUid string `json:"to_uid"`
+        Message string `json:"message"`
+        Status bool `json:"status"`
+    }
+
+    ChatMessageReq {
+        Uid string `json:"uid"`
+        ToUid string `json:"to_uid"`
+        Page int64 `json:"page"`
+        PageSize int64 `json:"page_size"`
+    }
+
+    ChatMessageRsp {
+        Code int64 `json:"code"`
+        Message string `json:"message"`
+        Chat []*ChatMessage `json:"chat"`
+    }
+
+    ChatHistorySaveReq {
+        ToUid string `json:"to_uid"`
+    }
+
+    Rsp {
+        Code int64 `json:"code"`
+        Message string `json:"message"`
+    }
+
+    User {
+        Id string `json:"id"`
+        Account string `json:"account"`
+        Name string `json:"name"`
+        Avatar string `json:"avatar"`
+        Status bool `json:"status"`
+    }
+
+    ChatHistoryRsp {
+        Code int64 `json:"code"`
+        Message string `json:"message"`
+        User []*User `json:"user"`
+    }
+
+    ChatNumberRsp {
+        Code int64 `json:"code"`
+        Message string `json:"message"`
+        Number int64 `json:"number"`
+    }
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

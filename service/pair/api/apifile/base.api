@@ -1,0 +1,85 @@
+syntax = "v1"
+
+@server(
+    jwt: Auth
+    group: ele
+)
+
+service pair-api {
+    @doc "添加元素"
+    @handler saveElementHandler
+    post /pair/element/save (eleSaveReq) returns (rsp)
+
+    @doc "查看元素"
+    @handler elementHandler
+    get /pair/element(eleViewReq) returns (eleRsp)
+
+    @doc "元素列表"
+    @handler listElementHandler
+    get /pair/element/list (eleListReq) returns (eleListRsp)
+}
+
+@server(
+    jwt: Auth
+)
+
+service pair-api {
+    @doc "元素匹配"
+    @handler pairHandler
+    get /pair/element/pair(eleListReq) returns (eleListRsp)
+}
+
+type (
+    eleListRsp {
+        Code int64 `json:"code"`
+        Message string `json:"message"`
+        UserElement []*UserElement `json:"userElement"`
+        Page int64 `json:"page"`
+        PageSize int64 `json:"pageSize"`
+        Total int64 `json:"total"`
+    }
+
+    eleListReq {
+        Page int64 `form:"page,default=1"`
+        PageSize int64 `form:"pageSize,default=30"`
+        Keyword string `form:"keyword,optional"`
+    }
+
+    eleSaveReq {
+        Element *Element `json:"element"`
+    }
+
+    eleViewReq{
+        Uid string `form:"uid,optional"`
+    }
+
+    eleRsp {
+        Code int64 `json:"code"`
+        Message string `json:"message"`
+        Element *Element `json:"element"`
+    }
+
+    rsp {
+        Code int64 `json:"code"`
+        Message string `json:"message"`
+    }
+)
+
+type (
+    Element {
+        Skill string `json:"skill,optional"`
+        SkillNeed string `json:"skill_need,optional"`
+        Star bool `json:"star,optional"`
+        Boost int64 `json:"boost,optional"`
+        HighLightSkill string `json:"highlight_skill,optional"`
+        HighLightSkillNeed string `json:"highlight_skill_need,optional"`
+    }
+
+    UserElement {
+        Id string `json:"id"`
+        Name string `json:"name"`
+        Account string `json:"account"`
+        Avatar string `json:"avatar"`
+        Element *Element `json:"element"`
+    }
+)

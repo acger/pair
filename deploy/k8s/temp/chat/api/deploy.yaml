@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-api
+  namespace: acger
+  labels:
+    app: chat-api
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: chat-api
+  template:
+    metadata:
+      labels:
+        app: chat-api
+    spec:
+      containers:
+        - name: chat-api
+          image: docker.io/dk251626910/ffl-chat-api:latest
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sh","-c","sleep 5" ]
+          ports:
+            - containerPort: 50003
+            - containerPort: 9053
+          readinessProbe:
+            tcpSocket:
+              port: 50003
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 50003
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 200m
+              memory: 200Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+            - name: log
+              mountPath: /var/log/acger-pair/chat-api
+            - name: config
+              mountPath: /app/etc
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+        - name: log
+          hostPath:
+            path: /var/log/acger-pair/chat-api
+        - name: config
+          configMap:
+            name: acger-config
+            items:
+              - key: chat-api.yaml
+                path: chat-api.yaml
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-api-svc
+  namespace: acger
+spec:
+  ports:
+    - name: main
+      port: 50003
+    - name: metrics
+      port: 9053
+  selector:
+    app: chat-api

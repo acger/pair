@@ -1,0 +1,491 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-rpc
+  namespace: acger
+  labels:
+    app: user-rpc
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: user-rpc
+  template:
+    metadata:
+      labels:
+        app: user-rpc
+    spec:
+      containers:
+        - name: user-rpc
+          image: docker.io/dk251626910/ffl-user-rpc:latest
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sh","-c","sleep 5" ]
+          ports:
+            - containerPort: 60001
+            - containerPort: 9061
+          readinessProbe:
+            tcpSocket:
+              port: 60001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 60001
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+            - name: log
+              mountPath: /var/log/acger-pair/user-rpc
+            - name: config
+              mountPath: /app/etc
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+        - name: log
+          hostPath:
+            path: /var/log/acger-pair/user-rpc
+        - name: config
+          configMap:
+            name: acger-config
+            items:
+              - key: user-rpc.yaml
+                path: user.yaml
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-rpc-svc
+  namespace: acger
+spec:
+  ports:
+    - name: main
+      port: 60001
+    - name: metrics
+      port: 9061
+  selector:
+    app: user-rpc
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pair-rpc
+  namespace: acger
+  labels:
+    app: pair-rpc
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: pair-rpc
+  template:
+    metadata:
+      labels:
+        app: pair-rpc
+    spec:
+      containers:
+        - name: pair-rpc
+          image: docker.io/dk251626910/ffl-pair-rpc:latest
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sh","-c","sleep 5" ]
+          ports:
+            - containerPort: 60002
+            - containerPort: 9062
+          readinessProbe:
+            tcpSocket:
+              port: 60002
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 60002
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+            - name: log
+              mountPath: /var/log/acger-pair/pair-rpc
+            - name: config
+              mountPath: /app/etc
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+        - name: log
+          hostPath:
+            path: /var/log/acger-pair/pair-rpc
+        - name: config
+          configMap:
+            name: acger-config
+            items:
+              - key: pair-rpc.yaml
+                path: pair.yaml
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pair-rpc-svc
+  namespace: acger
+spec:
+  ports:
+    - name: main
+      port: 60002
+    - name: metrics
+      port: 9062
+  selector:
+    app: pair-rpc
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-rpc
+  namespace: acger
+  labels:
+    app: chat-rpc
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: chat-rpc
+  template:
+    metadata:
+      labels:
+        app: chat-rpc
+    spec:
+      containers:
+        - name: chat-rpc
+          image: docker.io/dk251626910/ffl-chat-rpc:latest
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sh","-c","sleep 5" ]
+          ports:
+            - containerPort: 60003
+            - containerPort: 9063
+          readinessProbe:
+            tcpSocket:
+              port: 60003
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 60003
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+            - name: log
+              mountPath: /var/log/acger-pair/chat-rpc
+            - name: config
+              mountPath: /app/etc
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+        - name: log
+          hostPath:
+            path: /var/log/acger-pair/chat-rpc
+        - name: config
+          configMap:
+            name: acger-config
+            items:
+              - key: chat-rpc.yaml
+                path: chat.yaml
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-rpc-svc
+  namespace: acger
+spec:
+  ports:
+    - name: main
+      port: 60003
+    - name: metrics
+      port: 9063
+  selector:
+    app: chat-rpc
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-api
+  namespace: acger
+  labels:
+    app: user-api
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: user-api
+  template:
+    metadata:
+      labels:
+        app: user-api
+    spec:
+      containers:
+        - name: user-api
+          image: docker.io/dk251626910/ffl-user-api:latest
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sh","-c","sleep 5" ]
+          ports:
+            - containerPort: 50001
+            - containerPort: 9051
+          readinessProbe:
+            tcpSocket:
+              port: 50001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 50001
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+            - name: log
+              mountPath: /var/log/acger-pair/user-api
+            - name: config
+              mountPath: /app/etc
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+        - name: log
+          hostPath:
+            path: /var/log/acger-pair/user-api
+        - name: config
+          configMap:
+            name: acger-config
+            items:
+              - key: user-api.yaml
+                path: user-api.yaml
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-api-svc
+  namespace: acger
+spec:
+  ports:
+    - name: main
+      port: 50001
+    - name: metrics
+      port: 9051
+  selector:
+    app: user-api
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pair-api
+  namespace: acger
+  labels:
+    app: pair-api
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: pair-api
+  template:
+    metadata:
+      labels:
+        app: pair-api
+    spec:
+      containers:
+        - name: pair-api
+          image: docker.io/dk251626910/ffl-pair-api:latest
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sh","-c","sleep 5" ]
+          ports:
+            - containerPort: 50002
+            - containerPort: 9052
+          readinessProbe:
+            tcpSocket:
+              port: 50002
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 50002
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+            - name: log
+              mountPath: /var/log/acger-pair/pair-api
+            - name: config
+              mountPath: /app/etc
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+        - name: log
+          hostPath:
+            path: /var/log/acger-pair/pair-api
+        - name: config
+          configMap:
+            name: acger-config
+            items:
+              - key: pair-api.yaml
+                path: pair-api.yaml
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pair-api-svc
+  namespace: acger
+spec:
+  ports:
+    - name: main
+      port: 50002
+    - name: metrics
+      port: 9052
+  selector:
+    app: pair-api
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-api
+  namespace: acger
+  labels:
+    app: chat-api
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: chat-api
+  template:
+    metadata:
+      labels:
+        app: chat-api
+    spec:
+      containers:
+        - name: chat-api
+          image: docker.io/dk251626910/ffl-chat-api:latest
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sh","-c","sleep 5" ]
+          ports:
+            - containerPort: 50003
+            - containerPort: 9053
+          readinessProbe:
+            tcpSocket:
+              port: 50003
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 50003
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+            - name: log
+              mountPath: /var/log/acger-pair/chat-api
+            - name: config
+              mountPath: /app/etc
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+        - name: log
+          hostPath:
+            path: /var/log/acger-pair/chat-api
+        - name: config
+          configMap:
+            name: acger-config
+            items:
+              - key: chat-api.yaml
+                path: chat-api.yaml
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-api-svc
+  namespace: acger
+spec:
+  ports:
+    - name: main
+      port: 50003
+    - name: metrics
+      port: 9053
+  selector:
+    app: chat-api

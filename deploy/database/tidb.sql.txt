@@ -1,0 +1,70 @@
+CREATE DATABASE `fireflyUser`;
+USE fireflyUser;
+CREATE TABLE `users`
+(
+    `id`           BIGINT NOT NULL AUTO_RANDOM,
+    `account`      VARCHAR(30)   DEFAULT '',
+    `name`         VARCHAR(30)   DEFAULT '',
+    `avatar`       VARCHAR(255)  DEFAULT '',
+    `password`     VARCHAR(255)  DEFAULT '',
+    `gender`       VARCHAR(10)   DEFAULT '',
+    `status`       VARCHAR(20)   DEFAULT '',
+    `level`        VARCHAR(20)   DEFAULT '',
+    `birthday`     VARCHAR(10)   DEFAULT '',
+    `contact`      VARCHAR(255)  DEFAULT '',
+    `introduction` VARCHAR(1000) DEFAULT '',
+    `create_time`  datetime      DEFAULT CURRENT_TIMESTAMP,
+    `update_time`  datetime      DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `account` (`account`)
+) DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci PRE_SPLIT_REGIONS = 4;
+
+CREATE DATABASE `fireflyPair`;
+USE fireflyPair;
+CREATE TABLE `elements`
+(
+    `id`          bigint NOT NULL AUTO_RANDOM,
+    `create_time` datetime      DEFAULT CURRENT_TIMESTAMP,
+    `update_time` datetime      DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `uid`         bigint        DEFAULT '0',
+    `skill`       varchar(6000) DEFAULT '',
+    `skill_need`  varchar(6000) DEFAULT '',
+    `star`        tinyint(1)    DEFAULT '0',
+    `boost`       bigint        DEFAULT '0',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uid` (`uid`)
+) DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci PRE_SPLIT_REGIONS = 4;
+
+CREATE DATABASE `fireflyChat`;
+USE fireflyChat;
+CREATE TABLE `chats`
+(
+    `id`          bigint NOT NULL AUTO_RANDOM,
+    `create_time` datetime      DEFAULT CURRENT_TIMESTAMP,
+    `update_time` datetime      DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `uid`         bigint        DEFAULT '0',
+    `to_uid`      bigint        DEFAULT '0',
+    `message`     varchar(3000) DEFAULT '',
+    `status`      tinyint(1)    DEFAULT '0',
+    PRIMARY KEY (`id`),
+    KEY `idx_chats_uid` (`uid`),
+    KEY `idx_chats_to_uid` (`to_uid`),
+    KEY `idx_chats_create_time` (`create_time`)
+) DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci PRE_SPLIT_REGIONS = 4;
+
+CREATE TABLE `chat_histories`
+(
+    `id`          bigint NOT NULL AUTO_RANDOM,
+    `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+    `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `uid`         bigint   DEFAULT '0',
+    `to_uid`      bigint   DEFAULT '0',
+    PRIMARY KEY (`id`),
+    KEY `idx_chat_histories_uid` (`uid`)
+) DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci PRE_SPLIT_REGIONS = 4;
+
+ALTER TABLE `fireflyChat`.`chats` SET TIFLASH REPLICA 1;

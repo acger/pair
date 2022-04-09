@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pair-rpc
+  namespace: acger
+  labels:
+    app: pair-rpc
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: pair-rpc
+  template:
+    metadata:
+      labels:
+        app: pair-rpc
+    spec:
+      containers:
+        - name: pair-rpc
+          image: docker.io/dk251626910/ffl-pair-rpc:latest
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sh","-c","sleep 5" ]
+          ports:
+            - containerPort: 60002
+            - containerPort: 9062
+          readinessProbe:
+            tcpSocket:
+              port: 60002
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 60002
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 200m
+              memory: 200Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+            - name: log
+              mountPath: /var/log/acger-pair/pair-rpc
+            - name: config
+              mountPath: /app/etc
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+        - name: log
+          hostPath:
+            path: /var/log/acger-pair/pair-rpc
+        - name: config
+          configMap:
+            name: acger-config
+            items:
+              - key: pair-rpc.yaml
+                path: pair.yaml
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pair-rpc-svc
+  namespace: acger
+spec:
+  ports:
+    - name: main
+      port: 60002
+    - name: metrics
+      port: 9062
+  selector:
+    app: pair-rpc

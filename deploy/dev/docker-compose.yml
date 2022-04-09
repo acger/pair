@@ -1,0 +1,59 @@
+version: '3'
+
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    restart: always
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "9411:9411"
+    environment:
+      - SPAN_STORAGE_TYPE=memory
+      - LOG_LEVEL=debug
+    networks:
+      - firefly_net
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./prometheus/server/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    restart: always
+    user: root
+    ports:
+      - 9099:9090
+    networks:
+      - firefly_net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    hostname: grafana
+    user: root
+    environment:
+      TZ: Asia/Shanghai
+    restart: always
+    ports:
+      - "3001:3000"
+    networks:
+      - firefly_net
+
+networks:
+  firefly_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

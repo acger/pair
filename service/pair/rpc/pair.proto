@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package pair;
+
+option go_package = "./pair/pb";
+
+service Pair {
+    rpc ElementSave (EleSaveReq) returns (Response);
+    rpc ElementView (EleViewReq) returns (EleViewRsp);
+    rpc ElementList (EleListReq) returns (ELePairRsp);
+    rpc ElementPair (ElePairReq) returns (ELePairRsp);
+}
+
+message ELePairRsp {
+    int64 Code = 1;
+    string Message = 2;
+    repeated UserElement UserElement = 3;
+    int64 Page = 4;
+    int64 PageSize = 5;
+    int64 Total = 6;
+}
+
+message EleListReq {
+    int64 Page = 1;
+    int64 PageSize = 2;
+    string keyword = 3;
+}
+
+message ElePairReq {
+    int64 Uid = 1;
+    int64 Page = 2;
+    int64 PageSize = 3;
+}
+
+message EleViewRsp {
+    int64 Code = 1;
+    string Message = 2;
+    Element Element = 3;
+}
+
+message EleViewReq {
+    int64 Uid = 1;
+}
+
+message EleSaveReq {
+    int64 Uid = 1;
+    Element Element = 2;
+}
+
+message Response {
+    int64 Code = 1;
+    string Message = 2;
+}
+
+message UserElement {
+    int64 Id = 1;
+    string Name = 2;
+    string Avatar = 3;
+    string Account = 4;
+    Element Element = 5;
+}
+
+message Element {
+    int64 Uid = 1;
+    string Skill = 2;
+    string SkillNeed = 3;
+    bool Star = 4;
+    int64 Boost = 5;
+    string HighLightSkill = 6;
+    string HighLightSkillNeed = 7;
+}

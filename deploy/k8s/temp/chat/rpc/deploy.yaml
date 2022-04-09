@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-rpc
+  namespace: acger
+  labels:
+    app: chat-rpc
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: chat-rpc
+  template:
+    metadata:
+      labels:
+        app: chat-rpc
+    spec:
+      containers:
+        - name: chat-rpc
+          image: docker.io/dk251626910/ffl-chat-rpc:latest
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sh","-c","sleep 5" ]
+          ports:
+            - containerPort: 60003
+            - containerPort: 9063
+          readinessProbe:
+            tcpSocket:
+              port: 60003
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 60003
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 200m
+              memory: 200Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+            - name: log
+              mountPath: /var/log/acger-pair/chat-rpc
+            - name: config
+              mountPath: /app/etc
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+        - name: log
+          hostPath:
+            path: /var/log/acger-pair/chat-rpc
+        - name: config
+          configMap:
+            name: acger-config
+            items:
+              - key: chat-rpc.yaml
+                path: chat.yaml
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-rpc-svc
+  namespace: acger
+spec:
+  ports:
+    - name: main
+      port: 60003
+    - name: metrics
+      port: 9063
+  selector:
+    app: chat-rpc
