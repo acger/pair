@@ -29,6 +29,6 @@ func main() {
 	httpx.SetErrorHandler(aerror.ErrorHandler)
 	handler.RegisterHandlers(server, ctx)
 
-	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
+	fmt.Printf("starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
 }
