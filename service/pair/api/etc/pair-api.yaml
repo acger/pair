@@ -3,7 +3,7 @@ Host: 0.0.0.0
 Port: 50002
 
 Auth:
-  AccessSecret: "xxx@xxx"
+  AccessSecret: "xxxx@xxxx"
   AccessExpire: 7776000
 
 UserSvc:

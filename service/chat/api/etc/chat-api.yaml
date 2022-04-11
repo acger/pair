@@ -10,7 +10,7 @@ Log:
   Level: "error"
 
 Auth:
-  AccessSecret: "xxx@xxx"
+  AccessSecret: "xxxx@xxxx"
   AccessExpire: 7776000
 
 ChatRPC:
