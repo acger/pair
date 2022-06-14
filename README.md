@@ -2,10 +2,6 @@ Acger Pair 是基于微服务框架go-zero而搭建的一个练手项目，供�
 
 Acger Pair is a project built to learn go-zero, enjoy your self
 
-- 主页地址：[https://acger-pair.com](https://acger-pair.com)
-- 源码地址：[https://github.com/acger/pair](https://github.com/acger/pair)
-- web端源码：[https://github.com/acger/pair-web](https://github.com/acger/pair-web)
-
 项目基于TiDB、Elasticsearch、Filebeat、Kafka、Redis等技术栈开发，也包含了gorm、validator、copier、json-iterator、go-queue、go-elasticsearch、websocket、qiniu等等常用库，有兴趣的小伙伴翻一下代码就可以看到相关实践。服务端总共只有三个模块，用户模块 - user， 匹配模块 - pair， 聊天通讯模块 - chat，每个模块都有自己得api与rpc服务，手写的代码不过两三百行。自从使用了go-zero做开发，~~摸鱼时间翻倍~~生产效率直接提高100% ，go-zero yyds！
 
 - 这里顺手安利一下**tidb**，在群里看到经常有小伙伴问分布式事务怎么搞，其实把这个问题交给分布式数据库就好了。当你使用tidb的时候，跟使用单体的mysql数据库几乎是一模一样的，零代码入侵。分布式事务中的并发处理、数据的拆合、节点间的调度全部都在tidb内部完成，应用端可以无感知的使用，非常舒适。
